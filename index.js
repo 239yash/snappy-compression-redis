@@ -11,23 +11,16 @@ const client = redis.createClient({
     password: "changeit",
 });
 
-client.on("error", (err) => {
-    console.log("Error On Connection" + err);
-});
-client.connect();
-app.get("/get-redis-key", (req, res) => {
-    console.log("first");
-    client.set("foo", "bar", (err, reply) => {
-        if (err) throw err;
-        console.log(reply);
 
-        client.get("foo", (err, reply) => {
-            if (err) throw err;
-            console.log(reply);
-        });
-    });
-    console.log("second")
-    res.send("Hello World!");
+client.connect();
+client.on("connect", () => {
+    console.log("Redis client connected");
+})
+
+app.get("/get-redis-key", async (req, res) => {
+    let cachedData = await client.get("foo");
+    console.log("Redis Data is - " + cachedData);
+    res.status(200).send(cachedData);
 });
 
 app.listen(port, () => {
