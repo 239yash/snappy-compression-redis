@@ -9,6 +9,7 @@ const client = redis.createClient({
         port: 6379,
     },
     password: "changeit",
+    detect_buffers: true,
 });
 
 
