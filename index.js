@@ -16,6 +16,7 @@ const client = redis.createClient({
 });
 
 
+// Redis Client Connection
 client.connect();
 client.on("connect", () => {
     console.log("Redis client connected");
@@ -23,8 +24,11 @@ client.on("connect", () => {
 
 const testDataPromise = async () => {
     try {
+        
+        // Creating Blob to get the byte size of test data
         const buffer = new Blob([JSON.stringify(testData)]);
         console.log(buffer.size);
+
     } catch(err) {
         console.log(err);
     }
@@ -32,10 +36,15 @@ const testDataPromise = async () => {
 
 const compressData = async () => {
     try {
+
+        // Compress the data
         const compressed = await snappy.compressSync(JSON.stringify(testData));
         console.log(compressed.byteLength);
+
+        // Uncompress the data
         const unCompressedData = await snappy.uncompressSync(compressed);
         console.log(unCompressedData.byteLength);
+
     } catch(err) {
         console.log(err);
     }
@@ -43,8 +52,13 @@ const compressData = async () => {
 
 app.get("/get-redis-key", async (req, res) => {
     let cachedData = await client.get("foo");
+
+    // Checking the byte size of test data
     testDataPromise();
+
+    // Checking the byte size of compressed data
     compressData();
+
     res.status(200).send(cachedData);
 });
 
