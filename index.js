@@ -23,8 +23,17 @@ client.on("connect", () => {
 
 const testDataPromise = async () => {
     try {
-        var buffer = new Blob([JSON.stringify(testData)]);
+        const buffer = new Blob([JSON.stringify(testData)]);
         console.log(buffer.size);
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+const compressData = async () => {
+    try {
+        const compressed = await snappy.compressSync(JSON.stringify(testData));
+        console.log(compressed.byteLength);
     } catch(err) {
         console.log(err);
     }
@@ -33,6 +42,7 @@ const testDataPromise = async () => {
 app.get("/get-redis-key", async (req, res) => {
     let cachedData = await client.get("foo");
     testDataPromise();
+    compressData();
     res.status(200).send(cachedData);
 });
 
