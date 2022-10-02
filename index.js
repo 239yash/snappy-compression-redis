@@ -34,6 +34,8 @@ const compressData = async () => {
     try {
         const compressed = await snappy.compressSync(JSON.stringify(testData));
         console.log(compressed.byteLength);
+        const unCompressedData = await snappy.uncompressSync(compressed);
+        console.log(unCompressedData.byteLength);
     } catch(err) {
         console.log(err);
     }
